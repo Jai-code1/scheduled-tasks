@@ -2,7 +2,7 @@ import smtplib, random, os, pandas
 import datetime as dt
 
 MY_EMAIL = os.environ.get("MY_EMAIL")
-PASSWORD = os.environ.get("PASSWORD")
+MY_PASSWORD = os.environ.get("MY_PASSWORD")
 
 now = dt.datetime.now()
 month = now.month
@@ -33,7 +33,7 @@ if today in birthdays_dict:
     print("sending email...")
     with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
         connection.starttls()  #encrypt message
-        connection.login(user=MY_EMAIL, password=PASSWORD)
+        connection.login(user=MY_EMAIL, password=MY_PASSWORD)
         connection.sendmail(
             from_addr=MY_EMAIL, 
             to_addrs=birthday_person_email, 
