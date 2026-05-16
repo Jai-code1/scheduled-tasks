@@ -1,43 +1,43 @@
-import smtplib, random, os, pandas
-import datetime as dt
+import requests, os
+from twilio.rest import Client
 
-MY_EMAIL = os.environ.get("MY_EMAIL")
-MY_PASSWORD = os.environ.get("MY_PASSWORD")
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.environ.get("AUTH_TOKEN")
 
-now = dt.datetime.now()
-month = now.month
-day = now.day
-today = (month, day)
+api_key = os.environ.get("OWP_api_key")
+OWP_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
+MY_LAT = -8.761070
+MY_LONG = -63.885979
 
-data = pandas.read_csv("./birthdays.csv")
-birthdays_dict = {(data_row["month"], data_row["day"]): data_row for (_, data_row) in data.iterrows()}
-# ^^^ “Go through every row in the CSV file, and create a dictionary where:
-# -the KEY is (month, day)
-# -the VALUE is the entire row of data.”
-# what this looks like ^^
-# birthdays_dict = {
-#     (birthday_month, birthday_day): data_row
-# }
+parameters = {
+    "lat": MY_LAT,
+    "lon": MY_LONG,
+    "appid": api_key,
+    "cnt": 4
+}
 
-if today in birthdays_dict:
-    print('Birthday Match!')
+response = requests.get(url=OWP_endpoint, params=parameters)
+response.raise_for_status()
+data = response.json()
 
-    random_letter_file = random.choice(os.listdir("./letter_templates"))
+# print(data)
 
-    birthday_person_name = birthdays_dict[today]["name"]
-    birthday_person_email = birthdays_dict[today]["email"]
-    with open(f"./letter_templates/{random_letter_file}", mode="r") as file:
-        content = file.read()
-        content = content.replace("[NAME]", birthday_person_name)
+data_list = data["list"]
 
-    print("sending email...")
-    with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
-        connection.starttls()  #encrypt message
-        connection.login(user=MY_EMAIL, password=MY_PASSWORD)
-        connection.sendmail(
-            from_addr=MY_EMAIL, 
-            to_addrs=birthday_person_email, 
-            msg=f"Subject:Happy Birthday!\n\n{content}")
-    print("email sent!")
-else:
-    print('NOT a birthday Match')
+will_rain = False
+for hour_data in data_list:
+    weather_code = hour_data["weather"][0]["id"]
+    print(weather_code)
+    if int(weather_code) < 700:
+        # print("umbrella needed")
+        will_rain = True
+
+if will_rain:
+    client = Client(TWILIO_ACCOUNT_SID, AUTH_TOKEN)
+    message = client.messages.create(
+    body="It's going to rain today, bring an ☔️",
+    from_="whatsapp:+14155238886",
+    to="whatsapp:+14435672035",
+    )
+
+    print(message.status)
