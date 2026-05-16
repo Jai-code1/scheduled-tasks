@@ -3,7 +3,8 @@ from twilio.rest import Client
 
 TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
 AUTH_TOKEN = os.environ.get("AUTH_TOKEN")
-
+TO_NUMBER = os.environ.get("TO_NUMBER")
+FROM_NUMBER = os.environ.get("FROM_NUMBER")
 OWP_API_KEY = os.environ.get("OWP_API_KEY")
 OWP_endpoint = "https://api.openweathermap.org/data/2.5/forecast"
 MY_LAT = -8.761070
@@ -36,8 +37,8 @@ if will_rain:
     client = Client(TWILIO_ACCOUNT_SID, AUTH_TOKEN)
     message = client.messages.create(
     body="It's going to rain today, bring an ☔️",
-    from_="whatsapp:+14155238886",
-    to="whatsapp:+14435672035",
+    from_=FROM_NUMBER,
+    to=TO_NUMBER,
     )
 
     print(message.status)
