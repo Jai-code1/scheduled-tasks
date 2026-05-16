@@ -12,7 +12,7 @@ MY_LONG = -63.885979
 parameters = {
     "lat": MY_LAT,
     "lon": MY_LONG,
-    "appid": api_key,
+    "appid": OWP_API_KEY,
     "cnt": 4
 }
 
