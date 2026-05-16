@@ -43,4 +43,7 @@ jobs:
           # Add more secrets in Settings > Secrets > Actions
           MY_EMAIL: ${{ secrets.MY_EMAIL }}
           MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
+          AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+          OWP_API_KEY: ${{ secrets.OWP_API_KEY }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
         run: python main.py
